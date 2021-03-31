@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 
 import classes from './Cockpit.css';
+import AuthContext from '../../context/auth-context';
 
 const cockpit = (props) => {
+    const toggleBtnRef = useRef(null);
+    const authContext = useContext(AuthContext);
+
+    console.log(authContext.authenticated);
+
+    useEffect(() => {
+        console.log('[Cockpit.js] useEffect');
+        // Http request...
+        // setTimeout(() => {
+        //     alert('Saved data to cloud!');
+        // }, 1000);
+        toggleBtnRef.current.click();
+        return () => {
+            console.log('[Cockpit.js] cleanup work in useEffect');
+        }
+    }, []);
+
+    useEffect(() => {
+        console.log('[Cockpit.js] 2nd useEffect');
+        return () => {
+            console.log('[Cockpit.js] cleanup work in 2nd useEffect');
+        };
+    })
+
     const assignedclasses = [];
     let btnClass = '';
 
@@ -10,10 +35,10 @@ const cockpit = (props) => {
         btnClass = classes.Red;
     }
    
-    if (props.persons.length <= 2){
+    if (props.personsLength <= 2){
       assignedclasses.push(classes.red); //classes = ['red']
     }
-    if (props.persons.length <= 1){
+    if (props.personsLength <= 1){
       assignedclasses.push(classes.bold); //classes = ['red', 'bold']
     }
 
@@ -22,12 +47,14 @@ const cockpit = (props) => {
             <h1>{props.title}</h1>
             <p className={assignedclasses.join(' ')}>This is really working</p>
             <button 
+                ref={toggleBtnRef}
                 className={btnClass} 
                 alt={props.showPersons.toString()} onClick={props.clicked}>
                 Toggle persons
             </button> 
+            <button onClick={authContext.login}>Log in</button>
         </div>
     );
 };
 
-export default cockpit;
+export default React.memo(cockpit);
